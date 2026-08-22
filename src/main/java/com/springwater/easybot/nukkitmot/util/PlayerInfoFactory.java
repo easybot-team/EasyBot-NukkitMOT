@@ -1,9 +1,7 @@
 package com.springwater.easybot.nukkitmot.util;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.data.Skin;
 import com.springwater.easybot.bridge.model.PlayerInfo;
-import com.springwater.easybot.bridge.model.PlayerSkin;
 import com.springwater.easybot.bridge.packet.PlayerInfoWithRaw;
 
 public final class PlayerInfoFactory {
@@ -25,19 +23,7 @@ public final class PlayerInfoFactory {
         info.setPlayerUuid(player.getUniqueId().toString());
         info.setIp(safeAddress(player));
         info.setBedrock(!player.isJavaClient());
-        info.setSkinUrl(skinUrl(player));
         return info;
-    }
-
-    public static PlayerSkin playerSkin(Player player) {
-        String skinUrl = skinUrl(player);
-        if (skinUrl == null || skinUrl.isBlank()) {
-            return null;
-        }
-        PlayerSkin skin = new PlayerSkin();
-        skin.setSkinUrl(skinUrl);
-        skin.setCapeUrl(assetUrl(player.getSkin() == null ? null : player.getSkin().getCapeId()));
-        return skin;
     }
 
     private static String safeAddress(Player player) {
@@ -49,22 +35,4 @@ public final class PlayerInfoFactory {
         }
     }
 
-    private static String skinUrl(Player player) {
-        Skin skin = player.getSkin();
-        if (skin != null) {
-            String skinUrl = assetUrl(skin.getSkinId());
-            if (skinUrl != null) {
-                return skinUrl;
-            }
-        }
-        return player.isJavaClient() ? "https://mc-heads.net/skin/" + player.getUniqueId() : null;
-    }
-
-    private static String assetUrl(String value) {
-        if (value == null) {
-            return null;
-        }
-        String normalized = value.trim();
-        return normalized.startsWith("https://") || normalized.startsWith("http://") ? normalized : null;
-    }
 }

@@ -54,6 +54,9 @@ public final class NukkitBridgeBehavior implements BridgeBehavior {
             while (finalCommand.startsWith("/")) {
                 finalCommand = finalCommand.substring(1);
             }
+            if (finalCommand.isBlank()) {
+                throw new IllegalArgumentException("命令不能为空");
+            }
             CapturingConsoleCommandSender sender = new CapturingConsoleCommandSender();
             boolean success = plugin.getServer().dispatchCommand(sender, finalCommand);
             String output = sender.result(success);
@@ -182,19 +185,15 @@ public final class NukkitBridgeBehavior implements BridgeBehavior {
 
     @Override
     public boolean isAuthenticated(String playerName) {
-        return mainThread.call(() -> {
-            Player player = plugin.getServer().getPlayerExact(playerName);
-            if (player == null || !plugin.getServer().xboxAuth) {
-                return true;
-            }
-            return player.getLoginChainData() != null && player.getLoginChainData().isXboxAuthed();
-        });
+        // Nukkit-MOT itself has already completed its Xbox chain check before a player becomes online.
+        // This Bridge method is intended for optional login plugins, which this adapter does not emulate.
+        return true;
     }
 
     @Override
     public JsonObject ReadNbtData(String playerUuid, NbtDataTypeEnum dataType) {
         return mainThread.call(() -> {
-            if (blank(playerUuid) || dataType == null) {
+            if (blank(playerUuid) || dataType != NbtDataTypeEnum.PlayerData) {
                 return null;
             }
             UUID uuid;
@@ -205,24 +204,22 @@ public final class NukkitBridgeBehavior implements BridgeBehavior {
             }
 
             Player onlinePlayer = plugin.getServer().getOnlinePlayers().get(uuid);
-            CompoundTag playerData = !plugin.getServer().savePlayerDataByUuid && onlinePlayer != null
-                    ? plugin.getServer().getOfflinePlayerData(onlinePlayer.getName(), false)
-                    : plugin.getServer().getOfflinePlayerData(uuid, false);
+            CompoundTag playerData;
+            if (plugin.getServer().savePlayerDataByUuid) {
+                playerData = plugin.getServer().getOfflinePlayerData(uuid, false);
+            } else if (onlinePlayer != null) {
+                playerData = plugin.getServer().getOfflinePlayerData(onlinePlayer.getName(), false);
+            } else {
+                // Nukkit only exposes a name -> UUID lookup. In name-storage mode an offline UUID
+                // cannot be resolved back to its filename without bypassing the configured serializer.
+                return null;
+            }
             if (playerData == null) {
                 return null;
             }
-
-            Object value;
-            if (dataType == NbtDataTypeEnum.PlayerData) {
-                value = playerData.parseValue();
-            } else if (dataType == NbtDataTypeEnum.Advancements && playerData.containsCompound("Achievements")) {
-                value = playerData.getCompound("Achievements").parseValue();
-            } else if (dataType == NbtDataTypeEnum.Statistics && playerData.containsCompound("Statistics")) {
-                value = playerData.getCompound("Statistics").parseValue();
-            } else {
-                return null;
-            }
-            return com.springwater.easybot.bridge.BridgeClient.getGson().toJsonTree(value).getAsJsonObject();
+            return com.springwater.easybot.bridge.BridgeClient.getGson()
+                    .toJsonTree(playerData.parseValue())
+                    .getAsJsonObject();
         });
     }
 
@@ -236,10 +233,9 @@ public final class NukkitBridgeBehavior implements BridgeBehavior {
 
     @Override
     public PlayerSkin getPlayerSkin(String playerName) {
-        return mainThread.call(() -> {
-            Player player = plugin.getServer().getPlayerExact(playerName);
-            return player == null ? null : PlayerInfoFactory.playerSkin(player);
-        });
+        // Bridge skin responses require public URLs. Nukkit exposes raw Bedrock pixel data and
+        // opaque skin/cape identifiers, not a retrievable source URL.
+        return null;
     }
 
     @Override

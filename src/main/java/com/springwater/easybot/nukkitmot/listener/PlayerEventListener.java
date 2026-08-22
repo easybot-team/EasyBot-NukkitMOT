@@ -23,8 +23,11 @@ public final class PlayerEventListener implements Listener {
         this.plugin = plugin;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onAsyncPreLogin(PlayerAsyncPreLoginEvent event) {
+        if (event.getLoginResult() != PlayerAsyncPreLoginEvent.LoginResult.SUCCESS) {
+            return;
+        }
         BridgeClient client = plugin.getBridgeClient();
         try {
             if (client == null || !client.isReady()) {
