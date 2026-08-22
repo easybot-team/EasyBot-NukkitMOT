@@ -1,0 +1,50 @@
+# EasyBot 主程序连接设置
+service:
+  # 请填写 EasyBot 主程序日志中给出的 Bridge 地址
+  url: 'ws://127.0.0.1:26990/bridge'
+  # 在 EasyBot 主程序中生成的服务器 Token
+  token: ''
+  # Bridge 不可用或登录检查异常时，是否仍允许玩家进入
+  ignore_error: false
+  # 是否允许管理员通过命令查询主程序新版本
+  update_notify: true
+
+command:
+  # 是否允许玩家在此服务器发起绑定
+  allow_bind: true
+
+message:
+  bind_start: |-
+    §f[§a!§f] 开始绑定，请在群内输入“绑定 #code”进行绑定！
+    §f[§c!§f] 请在 §a#time §f前完成验证，超时将自动取消。
+  bind_success: '§f[§a!§f] 绑定 §a#account §f(§a#name§f) 成功！'
+  bind_fail: '§f[§c!§f] §c绑定失败：#why'
+  sync_success: '§f[§a!§f] §f发送成功！'
+  not_enough_money: '§c你的余额不足，发送这条消息需要 #money。'
+  economy_unavailable: '§c消息同步已启用收费，但服务器未安装或未启用 EconomyAPI。'
+  cross_bind: |-
+    §e检测到来自 #origin 的跨平台绑定请求，目标平台：#target
+    §f验证码：§a#code§f，请输入 §a/easybot confirm #code §f确认。
+
+event:
+  # 玩家绑定成功后，以控制台身份执行这些命令
+  enable_success_event: false
+  bind_success:
+    - 'say $player 绑定成功！账号：$account，昵称：$name'
+  on_at:
+    enable: true
+    title: '§a有人@你'
+    sub_title: '§a请及时处理'
+    # 开启后，普通消息中出现在线玩家名也视为 @
+    find: true
+    play_sound: true
+    # 0：铁砧；1：低音；2：紫水晶
+    sound: 0
+
+skip_options:
+  skip_join: false
+  skip_quit: false
+  skip_chat: false
+  skip_death: false
+
+debug: false

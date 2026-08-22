@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'com.gradleup.shadow' version '9.6.1'
+}
+
+group = 'com.springwater.easybot'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+    maven { url = uri('https://jitpack.io') }
+}
+
+dependencies {
+    compileOnly 'com.nukkit-mot:nukkit-mot:1.26.30-R1'
+    implementation 'com.github.easybot-team:easybot-bridge:1.7.6'
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17)
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release.set(17)
+}
+
+tasks.processResources {
+    filteringCharset = 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand(version: project.version)
+    }
+}
+
+tasks.shadowJar {
+    archiveBaseName.set('EasyBot-NukkitMOT')
+    archiveClassifier.set('')
+    archiveVersion.set(project.version.toString())
+    mergeServiceFiles()
+
+    relocate 'com.springwater.easybot.bridge', 'com.springwater.easybot.nukkitmot.libs.bridge'
+    relocate 'org.eclipse.jetty', 'com.springwater.easybot.nukkitmot.libs.jetty'
+    relocate 'org.slf4j', 'com.springwater.easybot.nukkitmot.libs.slf4j'
+    relocate 'com.google.gson', 'com.springwater.easybot.nukkitmot.libs.gson'
+
+    exclude 'META-INF/*.SF'
+    exclude 'META-INF/*.DSA'
+    exclude 'META-INF/*.RSA'
+}
+
+tasks.build {
+    dependsOn tasks.shadowJar
+}

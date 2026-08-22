@@ -1,0 +1,47 @@
+name: EasyBot
+main: com.springwater.easybot.nukkitmot.EasyBotNukkitMOT
+version: '${version}'
+api: ['1.0.0']
+author: EasyBot Team
+description: EasyBot 对 Nukkit-MOT 的原生适配
+website: https://github.com/easybot-team
+
+softdepend:
+  - PlaceholderAPI
+  - EconomyAPI
+
+commands:
+  easybot:
+    description: EasyBot 主命令
+    usage: '/easybot help'
+    aliases: [eb, ez]
+    permission: easybot.command
+    permission-message: '§c你没有权限执行这个命令'
+  esay:
+    description: 将消息同步到群聊
+    usage: '/esay <消息>'
+    permission: easybot.command.esay
+    permission-message: '§c你没有权限执行这个命令'
+
+permissions:
+  easybot.command:
+    description: 使用 EasyBot 基础命令
+    default: true
+  easybot.command.bind:
+    description: 绑定 EasyBot 社交账号
+    default: true
+  easybot.command.confirm:
+    description: 确认跨平台绑定
+    default: true
+  easybot.command.bindstatus:
+    description: 查询自己的绑定状态
+    default: true
+  easybot.command.status:
+    description: 查询 EasyBot 连接状态
+    default: true
+  easybot.command.esay:
+    description: 使用消息同步命令
+    default: true
+  easybot.admin:
+    description: 重载配置与查询版本
+    default: op
