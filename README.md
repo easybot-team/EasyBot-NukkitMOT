@@ -24,7 +24,7 @@ EasyBot Bridge 在 Nukkit-MOT 上的原生实现，目标服务端为 Nukkit-MOT
 
 ## 构建与安装
 
-使用 Java 17 运行 Gradle 的 `shadowJar` 任务，产物为 `EasyBot-NukkitMOT-1.0.0.jar`。将其放入 Nukkit-MOT 的 `plugins` 目录，首次启动后填写：
+使用 Java 17 运行 Gradle 的 `shadowJar` 任务，产物为 `EasyBot-NukkitMOT-1.0.1.jar`。将其放入 Nukkit-MOT 的 `plugins` 目录，首次启动后填写：
 
 ```yaml
 service:
