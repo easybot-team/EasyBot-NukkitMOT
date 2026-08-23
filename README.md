@@ -1,4 +1,6 @@
-# EasyBot Nukkit-MOT
+# EasyBot Nukkit-MOT 加载器
+> [!NOTE]
+> 本项目为社区项目
 
 EasyBot Bridge 在 Nukkit-MOT 上的原生实现，目标服务端为 Nukkit-MOT `1.26.30-R1`，运行环境为 Java 17。
 
